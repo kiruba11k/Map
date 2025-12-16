@@ -58,7 +58,6 @@ class BranchData:
         })
 
 # --- ALL ROUTES NOW START WITH /api TO MATCH VERCEL REWRITES ---
-
 @app.get("/api/branches")
 async def get_branches():
     data = BranchData.get_branches()
