@@ -108,7 +108,7 @@ class SBIDashboard {
             this.populateBranchTable();
             this.updateMetrics();
         } catch (error) {
-            console.error('Error loading branches:', error);
+            console.error('error.response?.data || error.message);
             this.showError('Failed to load branch data');
         } finally {
             this.hideLoading();
