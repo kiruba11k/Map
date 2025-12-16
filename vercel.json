@@ -1,20 +1,16 @@
 {
   "rewrites": [
     {
-      "source": "/api",
-      "destination": "/api/index.py"
-    },
-    {
       "source": "/api/(.*)",
       "destination": "/api/index.py"
     },
     {
-      "source": "/",
-      "destination": "/frontend/index.html"
+      "source": "/api",
+      "destination": "/api/index.py"
     },
     {
       "source": "/(.*)",
-      "destination": "/frontend/$1"
+      "destination": "/frontend/index.html"
     }
   ]
 }
