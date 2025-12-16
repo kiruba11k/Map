@@ -102,7 +102,7 @@ class SBIDashboard {
     async loadBranches() {
         try {
             this.showLoading();
-            const response = await axios.get(`${this.API_BASE}/api/branches`);
+            const response = await axios.get(`${this.API_BASE}/branches`);
             this.branches = response.data;
             this.populateBranchSelect();
             this.populateBranchTable();
