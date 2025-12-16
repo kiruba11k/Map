@@ -174,7 +174,7 @@ class SBIDashboard {
 
         try {
             this.showLoading();
-            const response = await axios.post(`${this.API_BASE}/api/search-poi`, searchData);
+            const response = await axios.post(`${this.API_BASE}/search-poi`, searchData);
             
             if (response.data.success) {
                 this.poiResults = response.data.data;
@@ -338,7 +338,7 @@ class SBIDashboard {
         try {
             this.showLoading();
             const response = await axios.post(
-                `${this.API_BASE}/api/export?format=${format}`,
+                `${this.API_BASE}/export?format=${format}`,
                 this.poiResults,
                 {
                     responseType: format === 'excel' ? 'blob' : 'json'
