@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException, Query, Body
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, FileResponse
+from fastapi.responses import JSONResponse, FileResponse, Response
+from pydantic import BaseModel
 import pandas as pd
 import requests
 import json
@@ -10,15 +11,16 @@ import io
 import asyncio
 import os
 from dotenv import load_dotenv
+from math import radians, sin, cos, sqrt, atan2
 
 load_dotenv()
 
 app = FastAPI(title="SBI Dashboard API", version="1.0.0")
 
-# CORS middleware
+# CORS middleware - Configured for your Vercel frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"],  # For now, allow all origins. Change to specific URL for production.
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -27,17 +29,14 @@ app.add_middleware(
 # Configuration
 APIFY_API_URL = "https://api.apify.com/v2/acts/powerai~google-map-nearby-search-scraper/run-sync-get-dataset-items"
 APIFY_TOKEN = os.getenv("APIFY_TOKEN", "your_token_here")
-from pydantic import BaseModel
-from typing import List, Optional
 
-# Add Pydantic models
+# Pydantic model
 class POISearchRequest(BaseModel):
     query: str
     branches: List[str]
     max_results: int = 30
     lat: Optional[float] = None
     lng: Optional[float] = None
-
 
 class BranchData:
     @staticmethod
@@ -60,18 +59,18 @@ class BranchData:
             "Longitude": [77.6992385, 77.6700914, 77.672937, 77.6406167, 77.7021471],
         })
 
-# Routes
+# Routes - NOTE: No "/api" prefix here since Vercel routes /api/* to this file
 @app.get("/")
 async def root():
     return {"message": "SBI Dashboard API"}
 
-@app.get("/api/branches")
+@app.get("/branches")
 async def get_branches():
     """Get all branch data"""
     data = BranchData.get_branches()
     return data.to_dict(orient="records")
 
-@app.get("/api/branch/{branch_name}")
+@app.get("/branch/{branch_name}")
 async def get_branch(branch_name: str):
     """Get specific branch data"""
     data = BranchData.get_branches()
@@ -80,7 +79,7 @@ async def get_branch(branch_name: str):
         raise HTTPException(status_code=404, detail="Branch not found")
     return branch.iloc[0].to_dict()
 
-@app.post("/api/search-poi")
+@app.post("/search-poi")
 async def search_poi(request: POISearchRequest):
     """Search for POIs near branches"""
     
@@ -123,7 +122,7 @@ async def search_poi(request: POISearchRequest):
     
     return {"success": False, "data": [], "count": 0}
 
-@app.get("/api/poi-categories")
+@app.get("/poi-categories")
 async def get_poi_categories():
     """Get POI categories"""
     categories = {
@@ -137,7 +136,7 @@ async def get_poi_categories():
     }
     return categories
 
-@app.post("/api/export")
+@app.post("/export")
 async def export_data(data: List[Dict], format: str = "json"):
     """Export data in various formats"""
     df = pd.DataFrame(data)
@@ -202,8 +201,6 @@ async def search_poi_apify(query: str, lat: float, lng: float, max_items: int = 
 
 def calculate_distance(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
     """Calculate distance between two points in km"""
-    from math import radians, sin, cos, sqrt, atan2
-    
     R = 6371
     lat1, lon1, lat2, lon2 = map(radians, [lat1, lon1, lat2, lon2])
     dlat = lat2 - lat1
