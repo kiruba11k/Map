@@ -9,7 +9,7 @@ class SBIDashboard {
         this.charts = {};
         
         // For Vercel deployment
-        this.API_BASE = window.location.origin;
+        this.API_BASE = window.location.origin + '/api';
     }
 
     async init() {
