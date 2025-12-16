@@ -27,14 +27,17 @@ app.add_middleware(
 # Configuration
 APIFY_API_URL = "https://api.apify.com/v2/acts/powerai~google-map-nearby-search-scraper/run-sync-get-dataset-items"
 APIFY_TOKEN = os.getenv("APIFY_TOKEN", "your_token_here")
+from pydantic import BaseModel
+from typing import List, Optional
 
-# Data models
+# Add Pydantic models
 class POISearchRequest(BaseModel):
     query: str
     branches: List[str]
     max_results: int = 30
     lat: Optional[float] = None
     lng: Optional[float] = None
+
 
 class BranchData:
     @staticmethod
