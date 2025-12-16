@@ -7,9 +7,9 @@ class SBIDashboard {
         this.map = null;
         this.poiMap = null;
         this.charts = {};
-        this.API_BASE = window.location.hostname === 'localhost' 
-            ? 'http://localhost:8000' 
-            : '/api';
+        
+        // For Vercel deployment
+        this.API_BASE = window.location.origin;
     }
 
     async init() {
