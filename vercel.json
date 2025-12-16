@@ -1,6 +1,4 @@
 {
- 
-{
   "rewrites": [
     {
       "source": "/api/(.*)",
@@ -9,18 +7,6 @@
     {
       "source": "/(.*)",
       "destination": "/frontend/$1"
-    }
-  ]
-},
-  "outputDirectory": "frontend",
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/api/index.py"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
     }
   ],
   "headers": [
