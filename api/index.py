@@ -58,7 +58,7 @@ class BranchData:
         })
 
 # --- ALL ROUTES NOW START WITH /api TO MATCH VERCEL REWRITES ---
-@app.get("/api/branches")
+@app.get("/branches")
 async def get_branches():
     data = BranchData.get_branches()
     return data.to_dict(orient="records")
@@ -71,7 +71,7 @@ async def get_branch(branch_name: str):
         raise HTTPException(status_code=404, detail="Branch not found")
     return branch.iloc[0].to_dict()
 
-@app.post("/api/search-poi")
+@app.post("/search-poi")
 async def search_poi(request: POISearchRequest):
     if request.lat and request.lng:
         results = await search_poi_apify(
