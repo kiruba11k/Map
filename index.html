@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SBI Bank Dashboard</title>
+    
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Mapbox GL -->
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css' rel='stylesheet' />
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- AOS Animations -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-university me-2"></i>
+                <span class="fw-bold">SBI</span> Dashboard
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#dashboard" data-tab="dashboard">
+                            <i class="fas fa-home me-1"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#poi-search" data-tab="poi-search">
+                            <i class="fas fa-search-location me-1"></i> POI Search
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#analytics" data-tab="analytics">
+                            <i class="fas fa-chart-bar me-1"></i> Analytics
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#export" data-tab="export">
+                            <i class="fas fa-download me-1"></i> Export
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container-fluid mt-5 pt-4">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-lg-3 col-xl-2 sidebar bg-dark text-white p-3 vh-100 position-fixed">
+                <h4 class="mb-4 text-primary">
+                    <i class="fas fa-filter me-2"></i>Controls
+                </h4>
+                
+                <!-- Branch Selection -->
+                <div class="mb-4">
+                    <h6 class="text-light mb-3">
+                        <i class="fas fa-code-branch me-2"></i>Branch Selection
+                    </h6>
+                    <div class="form-group">
+                        <select class="form-select bg-dark text-white border-secondary" id="branchSelect" multiple>
+                            <option value="All Branches" selected>All Branches</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- POI Search -->
+                <div class="mb-4">
+                    <h6 class="text-light mb-3">
+                        <i class="fas fa-search me-2"></i>POI Search
+                    </h6>
+                    
+                    <div class="mb-3">
+                        <label class="form-label text-light">Quick Categories</label>
+                        <select class="form-select bg-dark text-white border-secondary" id="poiCategory">
+                            <option value="">Select Category</option>
+                            <option value="college">Education</option>
+                            <option value="restaurant">Restaurant</option>
+                            <option value="hospital">Healthcare</option>
+                            <option value="mall">Retail</option>
+                            <option value="office">Business</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label text-light">Custom Search</label>
+                        <input type="text" class="form-control bg-dark text-white border-secondary" 
+                               id="customSearch" placeholder="e.g., coffee shops, gyms">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label text-light">Max Results</label>
+                        <input type="range" class="form-range" id="maxResults" min="10" max="100" value="30">
+                        <span class="text-light" id="maxResultsValue">30</span>
+                    </div>
+                    
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" id="manualSearchToggle">
+                        <label class="form-check-label text-light" for="manualSearchToggle">
+                            Manual Location Search
+                        </label>
+                    </div>
+                    
+                    <div id="manualSearchCoords" class="d-none">
+                        <div class="row mb-2">
+                            <div class="col-6">
+                                <input type="number" class="form-control bg-dark text-white border-secondary" 
+                                       id="manualLat" placeholder="Lat" step="0.000001" value="12.9716">
+                            </div>
+                            <div class="col-6">
+                                <input type="number" class="form-control bg-dark text-white border-secondary" 
+                                       id="manualLng" placeholder="Lng" step="0.000001" value="77.5946">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-primary w-100 mb-3" id="searchBtn">
+                        <i class="fas fa-search me-2"></i>Search POI
+                    </button>
+                    
+                    <button class="btn btn-outline-light w-100" id="clearResultsBtn">
+                        <i class="fas fa-trash me-2"></i>Clear Results
+                    </button>
+                </div>
+                
+                <!-- Map Controls -->
+                <div class="mb-4">
+                    <h6 class="text-light mb-3">
+                        <i class="fas fa-map me-2"></i>Map Controls
+                    </h6>
+                    
+                    <div class="mb-3">
+                        <label class="form-label text-light">Map Style</label>
+                        <select class="form-select bg-dark text-white border-secondary" id="mapStyle">
+                            <option value="light">Light</option>
+                            <option value="dark">Dark</option>
+                            <option value="streets">Streets</option>
+                            <option value="satellite">Satellite</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label text-light">Zoom Level</label>
+                        <input type="range" class="form-range" id="zoomLevel" min="5" max="20" value="12">
+                        <span class="text-light" id="zoomValue">12</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-lg-9 col-xl-10 ms-auto p-4">
+                <!-- Dashboard Tab -->
+                <div id="dashboard" class="tab-content active">
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h2 class="text-primary mb-3">
+                                <i class="fas fa-university me-2"></i>SBI Network Dashboard
+                            </h2>
+                            <p class="text-muted">Branch Network & POI Intelligence Platform</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Metrics Cards -->
+                    <div class="row mb-4" data-aos="fade-up">
+                        <div class="col-md-3 mb-3">
+                            <div class="metric-card card bg-primary text-white shadow">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-code-branch fa-2x mb-2"></i>
+                                    <h3 id="totalBranches" class="card-title">0</h3>
+                                    <p class="card-text">Total Branches</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="metric-card card bg-success text-white shadow">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-city fa-2x mb-2"></i>
+                                    <h3 id="citiesCovered" class="card-title">0</h3>
+                                    <p class="card-text">Cities Covered</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="metric-card card bg-warning text-white shadow">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-map-marker-alt fa-2x mb-2"></i>
+                                    <h3 id="areaCoverage" class="card-title">0°</h3>
+                                    <p class="card-text">Area Coverage</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="metric-card card bg-info text-white shadow">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-sync-alt fa-2x mb-2"></i>
+                                    <h3 id="lastUpdated" class="card-title">Now</h3>
+                                    <p class="card-text">Last Updated</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Map -->
+                    <div class="row mb-4" data-aos="fade-up">
+                        <div class="col-12">
+                            <div class="card shadow">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-map-marked-alt me-2"></i>Branch Network Map
+                                    </h5>
+                                </div>
+                                <div class="card-body p-0">
+                                    <div id="map" style="height: 500px; width: 100%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Branch Table -->
+                    <div class="row" data-aos="fade-up">
+                        <div class="col-12">
+                            <div class="card shadow">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-table me-2"></i>Branch Details
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover" id="branchesTable">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>Branch</th>
+                                                    <th>IFSC Code</th>
+                                                    <th>Address</th>
+                                                    <th>City</th>
+                                                    <th>Coordinates</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <!-- Filled by JavaScript -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- POI Search Tab -->
+                <div id="poi-search" class="tab-content" style="display: none;">
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h2 class="text-primary mb-3">
+                                <i class="fas fa-search-location me-2"></i>POI Search Results
+                            </h2>
+                        </div>
+                    </div>
+                    
+                    <!-- POI Metrics -->
+                    <div class="row mb-4" id="poiMetrics" style="display: none;">
+                        <div class="col-md-4 mb-3">
+                            <div class="card bg-dark text-white shadow">
+                                <div class="card-body text-center">
+                                    <h3 id="totalPOIs" class="card-title">0</h3>
+                                    <p class="card-text">Total POIs Found</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card bg-secondary text-white shadow">
+                                <div class="card-body text-center">
+                                    <h3 id="uniqueTypes" class="card-title">0</h3>
+                                    <p class="card-text">Unique Types</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card bg-success text-white shadow">
+                                <div class="card-body text-center">
+                                    <h3 id="avgRating" class="card-title">0.0</h3>
+                                    <p class="card-text">Average Rating</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- POI Map -->
+                    <div class="row mb-4" id="poiMapSection" style="display: none;">
+                        <div class="col-12">
+                            <div class="card shadow">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-map me-2"></i>POI Distribution
+                                    </h5>
+                                </div>
+                                <div class="card-body p-0">
+                                    <div id="poiMap" style="height: 500px; width: 100%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- POI Results -->
+                    <div class="row" id="poiResultsSection" style="display: none;">
+                        <div class="col-12">
+                            <div class="card shadow">
+                                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-list me-2"></i>POI Results
+                                    </h5>
+                                    <div class="btn-group">
+                                        <button class="btn btn-sm btn-outline-primary" id="exportCSV">
+                                            <i class="fas fa-file-csv me-1"></i>CSV
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-success" id="exportJSON">
+                                            <i class="fas fa-file-code me-1"></i>JSON
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-warning" id="exportExcel">
+                                            <i class="fas fa-file-excel me-1"></i>Excel
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover" id="poiTable">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>Name</th>
+                                                    <th>Address</th>
+                                                    <th>Rating</th>
+                                                    <th>Distance</th>
+                                                    <th>Type</th>
+                                                    <th>Near Branch</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <!-- Filled by JavaScript -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- No Results -->
+                    <div class="row" id="noResultsSection">
+                        <div class="col-12">
+                            <div class="card shadow">
+                                <div class="card-body text-center py-5">
+                                    <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                                    <h4 class="text-muted">No Search Results</h4>
+                                    <p class="text-muted">Use the sidebar to search for Points of Interest near SBI branches</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analytics Tab -->
+                <div id="analytics" class="tab-content" style="display: none;">
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h2 class="text-primary mb-3">
+                                <i class="fas fa-chart-bar me-2"></i>Analytics & Insights
+                            </h2>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <div class="card shadow">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0">POI Type Distribution</h5>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="typeChart" height="300"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-4">
+                            <div class="card shadow">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0">Rating Distribution</h5>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="ratingChart" height="300"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12">
+                            <div class="card shadow">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0">Search History</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover" id="searchHistoryTable">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>Timestamp</th>
+                                                    <th>Search Query</th>
+                                                    <th>Location</th>
+                                                    <th>Results</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <!-- Filled by JavaScript -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal fade" id="poiDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="poiDetailTitle"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="poiDetailContent">
+                    <!-- Filled by JavaScript -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="loading-spinner" style="display: none;">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js'></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script src="js/app.js"></script>
+    <script src="js/map.js"></script>
+    <script src="js/charts.js"></script>
+    
+    <script>
+        // Initialize AOS animations
+        AOS.init({
+            duration: 1000,
+            once: true
+        });
+        
+        // Initialize app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            const app = new SBIDashboard();
+            app.init();
+        });
+    </script>
+</body>
+</html>
