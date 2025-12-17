@@ -1,0 +1,312 @@
+:root {
+    --deep-twilight: #03045e;
+    --french-blue: #023e8a;
+    --bright-teal-blue: #0077b6;
+    --blue-green: #0096c7;
+    --turquoise-surf: #00b4d8;
+    --sky-aqua: #48cae4;
+    --frosted-blue: #90e0ef;
+    --frosted-blue-2: #ade8f4;
+    --light-cyan: #caf0f8;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--bright-teal-blue);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--deep-twilight);
+}
+
+/* Global Styles */
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, var(--light-cyan) 0%, #ffffff 100%);
+    min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+    background: linear-gradient(180deg, var(--deep-twilight), var(--bright-teal-blue));
+    box-shadow: 3px 0 15px rgba(0, 0, 0, 0.2);
+    overflow-y: auto;
+    z-index: 100;
+}
+
+.sidebar .form-control, .sidebar .form-select {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.sidebar .form-control:focus, .sidebar .form-select:focus {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-color: var(--sky-aqua);
+    box-shadow: 0 0 0 0.25rem rgba(72, 202, 228, 0.25);
+    color: white;
+}
+
+.sidebar .form-control::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* Metric Cards */
+.metric-card {
+    border: none;
+    border-radius: 15px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    overflow: hidden;
+    position: relative;
+}
+
+.metric-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2) !important;
+}
+
+.metric-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.metric-card:hover::before {
+    left: 100%;
+}
+
+/* Navigation */
+.navbar {
+    background: linear-gradient(90deg, var(--deep-twilight), var(--bright-teal-blue)) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.nav-link {
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    margin: 0 2px;
+}
+
+.nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+.nav-link.active {
+    background-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Cards */
+.card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+    border-radius: 15px 15px 0 0 !important;
+    border-bottom: none;
+    padding: 1rem 1.5rem;
+}
+
+/* Buttons */
+.btn {
+    border-radius: 10px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    padding: 0.5rem 1.5rem;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--bright-teal-blue), var(--turquoise-surf));
+    border: none;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, var(--french-blue), var(--bright-teal-blue));
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(2, 62, 138, 0.4);
+}
+
+/* Tables */
+.table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.table thead th {
+    border: none;
+    background-color: var(--light-cyan);
+    color: var(--deep-twilight);
+    font-weight: 600;
+    padding: 1rem;
+}
+
+.table tbody tr {
+    transition: all 0.3s ease;
+    border-radius: 10px;
+}
+
+.table tbody tr:hover {
+    background-color: rgba(202, 240, 248, 0.3);
+    transform: translateX(5px);
+}
+
+.table tbody td {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 1rem;
+}
+
+/* Map */
+#map, #poiMap {
+    border-radius: 0 0 15px 15px;
+}
+
+.mapboxgl-ctrl-logo, .mapboxgl-ctrl-attrib {
+    display: none !important;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.loading-spinner .spinner-border {
+    width: 3rem;
+    height: 3rem;
+}
+
+/* Form Controls */
+.form-range::-webkit-slider-thumb {
+    background: var(--bright-teal-blue);
+}
+
+.form-range::-moz-range-thumb {
+    background: var(--bright-teal-blue);
+}
+
+.form-check-input:checked {
+    background-color: var(--bright-teal-blue);
+    border-color: var(--bright-teal-blue);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.tab-content {
+    animation: fadeIn 0.5s ease;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .sidebar {
+        position: relative !important;
+        height: auto;
+        margin-bottom: 2rem;
+    }
+    
+    .col-lg-9.col-xl-10 {
+        margin-left: 0 !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .metric-card {
+        margin-bottom: 1rem;
+    }
+    
+    #map, #poiMap {
+        height: 300px !important;
+    }
+}
+
+/* Custom Utility Classes */
+.text-gradient {
+    background: linear-gradient(90deg, var(--deep-twilight), var(--blue-green));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.bg-gradient-primary {
+    background: linear-gradient(135deg, var(--deep-twilight), var(--bright-teal-blue));
+}
+
+.bg-gradient-secondary {
+    background: linear-gradient(135deg, var(--turquoise-surf), var(--sky-aqua));
+}
+
+/* Chart Container */
+.chart-container {
+    position: relative;
+    height: 300px;
+    width: 100%;
+}
+
+/* Tooltips */
+.tooltip-inner {
+    background-color: var(--deep-twilight);
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+}
+
+.bs-tooltip-top .tooltip-arrow::before {
+    border-top-color: var(--deep-twilight);
+}
+
+/* Badges */
+.badge {
+    border-radius: 10px;
+    padding: 0.5em 1em;
+    font-weight: 500;
+}
+
+.badge-primary {
+    background: linear-gradient(135deg, var(--bright-teal-blue), var(--turquoise-surf));
+}
+
+/* Progress Bars */
+.progress {
+    height: 10px;
+    border-radius: 5px;
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.progress-bar {
+    background: linear-gradient(90deg, var(--sky-aqua), var(--frosted-blue));
+    border-radius: 5px;
+}
